@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --paper:  #F4F1E8;
+    --paper2: #FBF9F2;
+    --paper3: #ECE7D8;
+    --ink:    #1B211E;
+    --ink-soft:#45514B;
+    --ink-faint:#5D6A62;
+    --rule:   #D8D2C0;
+    --orange: #C1471F;
+    --orange-tx:#B23F1A;
+    --orange-wash:#F6E2D7;
+    --green:  #2E7D32;
+    --green-tx:#1E6B2B;
+    --green-wash:#E1EEDD;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    position: relative;
+    background:
+      radial-gradient(1100px 560px at 92% -14%, var(--orange-wash), transparent 58%),
+      radial-gradient(760px 480px at -6% 6%, var(--green-wash), transparent 56%),
+      linear-gradient(180deg, var(--paper2), var(--paper) 80%);
+    font-family: var(--sans);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  /* faint field grid behind everything */
+  .grid { position: absolute; inset: 0; opacity: 0.5; }
+  .grid line { stroke: var(--rule); stroke-width: 1.3; }
+
+  .frame {
+    position: absolute; inset: 0;
+    padding: 76px 84px;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 54px;
+    align-items: center;
+  }
+
+  /* left: wordmark + headline */
+  .brand { display: flex; align-items: center; gap: 18px; }
+  .brand svg { width: 64px; height: 68px; }
+  .brand .word { font-size: 47px; font-weight: 800; letter-spacing: -0.035em; color: var(--ink); }
+
+  .headline { margin-top: 42px; }
+  .headline h1 {
+    font-size: 60px; font-weight: 800; letter-spacing: -0.03em;
+    line-height: 1.07; color: var(--ink); max-width: 15ch;
+  }
+  .headline .accent { color: var(--orange-tx); }
+  .headline p {
+    margin-top: 26px;
+    font-size: 26px; font-weight: 500; letter-spacing: -0.01em;
+    color: var(--ink-soft); line-height: 1.34; max-width: 30ch;
+  }
+  .chips { margin-top: 30px; display: flex; gap: 12px; }
+  .chip {
+    font-size: 19px; font-weight: 700; padding: 8px 18px; border-radius: 999px;
+    background: var(--paper2); border: 1.5px solid var(--rule); color: var(--ink-soft);
+  }
+  .chip.on-orange { border-color: var(--orange); color: var(--orange-tx); background: var(--orange-wash); }
+  .chip.on-green { border-color: var(--green); color: var(--green-tx); background: var(--green-wash); }
+
+  /* right: the clipboard signature */
+  .clip { position: relative; padding-top: 22px; }
+  .clip .clamp {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 152px; height: 34px; z-index: 2;
+    background: linear-gradient(180deg, #3A433D, var(--ink));
+    border-radius: 11px 11px 6px 6px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 6px 14px -6px rgba(27,33,30,0.55);
+    display: grid; place-items: center;
+  }
+  .clip .grip { width: 58px; height: 8px; border-radius: 999px; background: rgba(255,255,255,0.3); }
+  .clip .paper {
+    background: var(--paper2);
+    border: 1px solid var(--rule);
+    border-radius: 20px;
+    box-shadow: 0 34px 66px -30px rgba(27,33,30,0.5);
+    padding: 46px 34px 30px;
+    position: relative;
+  }
+  .clip .paper::before {
+    content: ""; position: absolute; top: 17px; left: 50%; transform: translateX(-50%);
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--paper3); box-shadow: inset 0 1px 3px rgba(27,33,30,0.4);
+  }
+  .p-title {
+    font-size: 18px; font-weight: 800; color: var(--ink-faint);
+    text-transform: uppercase; letter-spacing: 0.11em;
+    padding-bottom: 16px; border-bottom: 1.8px solid var(--rule);
+  }
+  .row {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 17px 0; font-size: 25px;
+  }
+  .row + .row { border-top: 1.4px dashed var(--rule); }
+  .row .q { color: var(--ink-soft); font-weight: 600; }
+  .row .a { font-weight: 800; color: var(--ink); }
+  .row .a.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .pill {
+    display: inline-block; font-size: 20px; font-weight: 700;
+    padding: 5px 16px; border-radius: 999px;
+    background: var(--orange-wash); color: var(--orange-tx); border: 1.5px solid var(--orange);
+  }
+  .pill.yes { background: var(--green-wash); color: var(--green-tx); border-color: var(--green); }
+  .p-foot {
+    margin-top: 18px; padding-top: 16px;
+    border-top: 1.8px solid var(--rule);
+    font-size: 18px; color: var(--ink-faint);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .p-foot .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--green); }
+</style>
+</head>
+<body>
+  <svg class="grid" viewBox="0 0 1200 630" preserveAspectRatio="none" aria-hidden="true">
+    <line x1="0" y1="126" x2="1200" y2="126"/>
+    <line x1="0" y1="252" x2="1200" y2="252"/>
+    <line x1="0" y1="378" x2="1200" y2="378"/>
+    <line x1="0" y1="504" x2="1200" y2="504"/>
+  </svg>
+
+  <div class="frame">
+    <div>
+      <div class="brand">
+        <svg viewBox="0 0 32 34" aria-hidden="true">
+          <rect width="32" height="34" rx="8" fill="#1B211E"/>
+          <rect x="9" y="8" width="14" height="19" rx="2.4" fill="#F4F1E8"/>
+          <rect x="12.5" y="6" width="7" height="3.6" rx="1.8" fill="#C1471F"/>
+          <path d="M12 17 l2.6 2.6 l4.8 -5.4" fill="none" stroke="#2E7D32" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="12" y1="22.5" x2="20" y2="22.5" stroke="#D8D2C0" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <span class="word">fieldform</span>
+      </div>
+      <div class="headline">
+        <h1>Build a form. Collect data<br><span class="accent">with zero signal.</span></h1>
+        <p>An offline-first data-collection tool for the field.</p>
+      </div>
+      <div class="chips">
+        <span class="chip on-orange">No server</span>
+        <span class="chip on-green">Export to CSV</span>
+        <span class="chip">100% private</span>
+      </div>
+    </div>
+
+    <div class="clip">
+      <div class="clamp"><span class="grip"></span></div>
+      <div class="paper">
+        <p class="p-title">Site survey &middot; entry 128</p>
+        <div class="row"><span class="q">Plot ID</span><span class="a">NR&ndash;04</span></div>
+        <div class="row"><span class="q">Trees counted</span><span class="a num">37</span></div>
+        <div class="row"><span class="q">Canopy health</span><span class="a"><span class="pill">Fair</span></span></div>
+        <div class="row"><span class="q">Access clear?</span><span class="a"><span class="pill yes">Yes</span></span></div>
+        <p class="p-foot"><span class="dot"></span>Saved offline &middot; nothing left this device</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

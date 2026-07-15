@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'">
+  <title>fieldform — build a form, collect data offline, export to CSV</title>
+  <meta name="description" content="An offline-first form builder and data-collection tool for low-connectivity field work. Build a form, fill it out with zero signal, save every submission on your device, and export to CSV or JSON. No server, no sync, no accounts.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="canonical" href="https://sreenivas-sadhu-prabhakara.github.io/fieldform/">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Sreenivas Sadhu Prabhakara">
+  <meta name="keywords" content="offline form builder, field data collection, offline data collection app, CSV export forms, low connectivity survey tool, no server form app, kobo alternative offline, form definition JSON export, PWA form builder, private data collection">
+  <meta name="theme-color" content="#F4F1E8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#171D1A" media="(prefers-color-scheme: dark)">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="fieldform">
+  <meta property="og:title" content="fieldform — build a form, collect data offline, export to CSV">
+  <meta property="og:description" content="Build a form, fill it out with zero signal, save every submission on your device, then export to CSV or JSON. No server, no sync, no accounts — it just works offline.">
+  <meta property="og:url" content="https://sreenivas-sadhu-prabhakara.github.io/fieldform/">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://sreenivas-sadhu-prabhakara.github.io/fieldform/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="fieldform — a rugged field clipboard that collects data offline and exports to CSV">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="fieldform — build a form, collect data offline, export to CSV">
+  <meta name="twitter:description" content="Build a form, fill it out with zero signal, save every submission on your device, then export to CSV or JSON. No server, no sync, no accounts.">
+  <meta name="twitter:image" content="https://sreenivas-sadhu-prabhakara.github.io/fieldform/og-image.png">
+  <meta name="twitter:image:alt" content="fieldform — a rugged field clipboard that collects data offline and exports to CSV">
+
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- Structured data (data block; not affected by script-src) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "fieldform",
+    "description": "An offline-first form builder and data-collection tool for low-connectivity field work. Build a form with text, number, choice, date, and yes/no fields, fill it out with zero signal, save every submission on your device, and export to CSV or JSON. No server, no cloud sync, no accounts.",
+    "url": "https://sreenivas-sadhu-prabhakara.github.io/fieldform/",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any (modern web browser)",
+    "browserRequirements": "Requires a modern web browser with JavaScript enabled.",
+    "isAccessibleForFree": true,
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "license": "https://opensource.org/licenses/MIT",
+    "author": { "@type": "Person", "name": "Sreenivas Sadhu Prabhakara" },
+    "softwareVersion": "0.1.0",
+    "featureList": [
+      "Build forms with text, number, single-choice, multi-choice, date, and yes/no fields",
+      "Mark fields required, reorder them, and edit labels and options",
+      "Collect submissions fully offline with a running count",
+      "Browse and delete individual submissions",
+      "Export all submissions to CSV and JSON",
+      "Export and import the form definition as a shareable JSON file",
+      "Works with zero signal — no network request is ever made"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Does fieldform work with no internet connection?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. fieldform is a single static page that never makes a network request — a strict Content-Security-Policy sets connect-src 'none', so it cannot reach any server even if it tried. Once the page has loaded, you can build forms, collect submissions, and export files with zero signal. Add it to your home screen and it opens like an app."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does fieldform sync my data to the cloud?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No, and it is honest about that. There is no server and no cloud sync — that would require a backend fieldform deliberately does not have. Your submissions are saved only in this browser's local storage. To move data off the device you export it: submissions to CSV or JSON, and the form itself to a JSON file you can share. The handoff is export, not sync."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I share a form I built with a colleague?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use Export form to download the form definition as a small JSON file, then send that file however you like — email, chat, a USB stick, or a shared drive. Your colleague opens fieldform, chooses Import form, and picks the file. The form rebuilds exactly, ready to collect. Because it is just a file, this works with no shared server."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Will my CSV export open cleanly if my answers contain commas or quotes?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. fieldform escapes CSV output to RFC 4180: any value containing a comma, double-quote, or line break is wrapped in quotes and embedded quotes are doubled, so it imports correctly into Excel, Google Sheets, or any spreadsheet without breaking columns."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my collected data private?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Completely. Everything you build and collect stays in this device's local storage. A strict Content-Security-Policy blocks every network request, so nothing you enter is ever transmitted anywhere. Clearing your browser data or the app removes it — keep your exports as your backup."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to the workspace</a>
+
+  <!-- ============ HERO ============ -->
+  <header class="hero" id="top">
+    <div class="hero__inner">
+      <div class="hero__lead">
+        <a class="brand" href="#top" aria-label="fieldform home">
+          <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+            <rect x="6" y="2.5" width="20" height="27" rx="3" class="brand__board"/>
+            <rect x="11" y="1" width="10" height="4.5" rx="2" class="brand__clip"/>
+            <path class="brand__check" d="M10 15.2 l3 3 l5.6 -6.4"/>
+            <line x1="10" y1="22.5" x2="22" y2="22.5" class="brand__line"/>
+            <line x1="10" y1="26" x2="18" y2="26" class="brand__line"/>
+          </svg>
+          <span class="brand__word">fieldform</span>
+        </a>
+        <p class="eyebrow">Offline data collection &middot; field work &middot; no server</p>
+        <h1 class="hero__title">Build a form. Collect data <span class="hero__accent">with zero signal.</span></h1>
+        <p class="hero__lede">
+          A rugged digital clipboard for low-connectivity field work. Build a form, fill it out anywhere&mdash;no
+          bars, no wifi, no problem&mdash;and every submission is saved right here on your device. When you're
+          back in range, export it all to CSV or JSON. No accounts, no cloud, no network calls at all.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#collect">Start collecting</a>
+          <a class="btn btn--quiet" href="#build">Edit the form</a>
+        </div>
+      </div>
+
+      <!-- Signature clipboard motif -->
+      <aside class="clip" aria-label="Example form on a field clipboard">
+        <div class="clip__clamp" aria-hidden="true"><span class="clip__grip"></span></div>
+        <div class="clip__paper">
+          <p class="clip__title">Site survey &middot; sample</p>
+          <ul class="clip__rows">
+            <li class="clip-row"><span class="clip-row__q">Plot ID</span><span class="clip-row__a">NR&ndash;04</span></li>
+            <li class="clip-row"><span class="clip-row__q">Trees counted</span><span class="clip-row__a clip-row__a--num">37</span></li>
+            <li class="clip-row"><span class="clip-row__q">Canopy health</span><span class="clip-row__a"><span class="pill">Fair</span></span></li>
+            <li class="clip-row"><span class="clip-row__q">Access clear?</span><span class="clip-row__a"><span class="pill pill--yes">Yes</span></span></li>
+          </ul>
+          <p class="clip__foot"><span class="clip__dot" aria-hidden="true"></span>Saved offline &middot; entry 128</p>
+        </div>
+      </aside>
+    </div>
+  </header>
+
+  <main id="workspace">
+    <!-- ============ FORM BAR (which form + import/export def) ============ -->
+    <section class="formbar" aria-label="Choose or share a form">
+      <div class="formbar__inner">
+        <div class="formbar__pick">
+          <label class="field field--inline" for="formSelect">
+            <span class="field__label">Form</span>
+            <span class="select">
+              <select id="formSelect" aria-label="Choose a form"></select>
+            </span>
+          </label>
+          <div class="formbar__btns">
+            <button type="button" class="btn btn--quiet btn--sm" id="newFormBtn">New form</button>
+            <button type="button" class="btn btn--quiet btn--sm" id="renameFormBtn">Rename</button>
+            <button type="button" class="btn btn--danger btn--sm" id="deleteFormBtn">Delete</button>
+          </div>
+        </div>
+        <div class="formbar__share">
+          <button type="button" class="btn btn--quiet btn--sm" id="exportFormBtn">Export form&nbsp;file</button>
+          <button type="button" class="btn btn--quiet btn--sm" id="importFormBtn">Import form&nbsp;file</button>
+          <input type="file" id="importFormInput" accept="application/json,.json" class="sr-only" aria-hidden="true" tabindex="-1">
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <!-- ============ LEFT: BUILD ============ -->
+      <div class="col col--build">
+        <section class="card" aria-labelledby="buildHeading" id="build">
+          <div class="card__head">
+            <h2 class="card__title" id="buildHeading">Build</h2>
+            <span class="card__count" id="fieldCount">0</span>
+          </div>
+          <p class="hint">Add the questions you need. Drag the handle, or use the arrows, to reorder. Everything you build is saved on this device.</p>
+
+          <ul class="fields" id="fieldList" aria-label="Form fields"></ul>
+          <p class="empty" id="fieldsEmpty">No fields yet. Add your first question below.</p>
+
+          <form class="addfield" id="addFieldForm" novalidate>
+            <div class="field">
+              <label class="field__label" for="newFieldLabel">New question</label>
+              <input type="text" id="newFieldLabel" class="input" placeholder="e.g. Plot ID, Trees counted, Access clear?" autocomplete="off" maxlength="120">
+            </div>
+            <div class="addfield__row">
+              <div class="field field--type">
+                <label class="field__label" for="newFieldType">Type</label>
+                <span class="select">
+                  <select id="newFieldType" aria-label="Field type">
+                    <option value="text">Text</option>
+                    <option value="number">Number</option>
+                    <option value="single">Single choice</option>
+                    <option value="multi">Multiple choice</option>
+                    <option value="date">Date</option>
+                    <option value="yesno">Yes / No</option>
+                  </select>
+                </span>
+              </div>
+              <label class="reqtoggle" for="newFieldRequired">
+                <input type="checkbox" id="newFieldRequired">
+                <span>Required</span>
+              </label>
+            </div>
+            <div class="field addfield__opts" id="newFieldOptsWrap" hidden>
+              <label class="field__label" for="newFieldOpts">Choices <span class="field__hint">one per line</span></label>
+              <textarea id="newFieldOpts" class="input textarea" rows="3" placeholder="Good&#10;Fair&#10;Poor" autocomplete="off"></textarea>
+            </div>
+            <div class="addfield__actions">
+              <button type="submit" class="btn btn--primary" id="addFieldBtn">Add field</button>
+            </div>
+            <p class="formerror" id="buildError" role="alert" aria-live="assertive"></p>
+          </form>
+        </section>
+      </div>
+
+      <!-- ============ RIGHT: COLLECT + SUBMISSIONS ============ -->
+      <div class="col col--collect">
+        <!-- Collect form -->
+        <section class="card card--collect" aria-labelledby="collectHeading" id="collect">
+          <div class="card__head">
+            <h2 class="card__title" id="collectHeading">Collect</h2>
+            <span class="card__badge" id="offlineBadge" title="This app never touches the network">offline</span>
+          </div>
+          <form class="collect" id="collectForm" novalidate>
+            <div class="collect__fields" id="collectFields"></div>
+            <p class="empty" id="collectEmpty">Add at least one field on the left, then fill it in here.</p>
+            <div class="collect__actions" id="collectActions" hidden>
+              <button type="submit" class="btn btn--primary btn--big" id="saveEntryBtn">Save entry</button>
+              <button type="button" class="btn btn--quiet" id="clearEntryBtn">Clear</button>
+            </div>
+            <p class="formerror" id="collectError" role="alert" aria-live="assertive"></p>
+          </form>
+        </section>
+
+        <!-- Submissions -->
+        <section class="card" aria-labelledby="subsHeading">
+          <div class="card__head">
+            <h2 class="card__title" id="subsHeading">Submissions</h2>
+            <span class="card__count" id="subCount">0</span>
+          </div>
+          <div class="exportbar" id="exportBar" hidden>
+            <button type="button" class="btn btn--accent btn--sm" id="exportCsvBtn">Export CSV</button>
+            <button type="button" class="btn btn--accent btn--sm" id="exportJsonBtn">Export JSON</button>
+            <button type="button" class="btn btn--danger btn--sm" id="clearSubsBtn">Delete all</button>
+          </div>
+          <ul class="subs" id="subList"></ul>
+          <p class="empty" id="subsEmpty">No submissions yet. Saved entries appear here, newest first.</p>
+        </section>
+      </div>
+    </div>
+
+    <!-- toast -->
+    <p class="toast" id="toast" role="status" aria-live="polite" hidden></p>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="foot">
+    <div class="foot__inner">
+      <p class="foot__disclaimer">
+        <strong>A tool, not a service.</strong> fieldform has no server and no cloud sync&mdash;the way you move
+        data off a device is to <em>export</em> it, not sync it. It is provided under the MIT License, "as is",
+        without warranty of any kind; the authors accept no liability for any lost, corrupted, or mishandled data.
+        Your submissions live only in this browser&mdash;keep your exports as the backup.
+      </p>
+      <p class="foot__meta">
+        <span>Runs entirely in your browser &mdash; nothing you enter leaves this device.</span><span class="foot__dot">&middot;</span>
+        <span>No network, no accounts</span><span class="foot__dot">&middot;</span>
+        <span>MIT&nbsp;License</span><span class="foot__dot">&middot;</span>
+        <span>&copy; 2026 Sreenivas&nbsp;Sadhu&nbsp;Prabhakara</span>
+      </p>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
